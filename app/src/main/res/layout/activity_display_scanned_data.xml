@@ -1,0 +1,602 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".DisplayScannedDataActivity">
+
+    <RelativeLayout
+        android:id="@+id/topLayout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_keyboard_backspace_24"
+            android:layout_centerVertical="true"
+            android:padding="10dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Match Data"
+            android:layout_toEndOf="@id/backButton"
+            android:layout_centerVertical="true"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:layout_marginStart="20sp"/>
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/matchOrNot"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Match"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:gravity="center"
+                    android:visibility="invisible"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:layout_marginStart="20sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                android:layout_marginTop="20dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/cartonLabelBT"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Carton Label"
+                    app:cornerRadius="10dp"
+                    android:textColor="@color/black"
+                    android:backgroundTint="@color/colorAccent"
+                    app:strokeColor="@color/blue"
+                    app:strokeWidth="1dp"
+                    app:elevation="10dp"
+                    android:layout_marginStart="10dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/minusTagBT"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Minus- Tag"
+                    app:cornerRadius="10dp"
+                    android:textColor="@color/black"
+                    android:backgroundTint="@color/colorAccent"
+                    android:clickable="false"
+                    android:enabled="false"
+                    app:strokeColor="@color/blue"
+                    app:strokeWidth="1dp"
+                    android:layout_marginStart="10dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/goodTagBT"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Good Tag"
+                    android:textColor="@color/black"
+                    app:cornerRadius="10dp"
+                    android:layout_marginStart="10dp"
+                    android:clickable="false"
+                    android:enabled="false"
+                    app:strokeColor="@color/blue"
+                    app:strokeWidth="1dp"
+                    android:backgroundTint="@color/colorAccent"
+                    android:layout_marginEnd="10dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:weightSum="3">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/cartonCTNR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/grey"
+                    android:text="Ct.Nr"
+                    android:clickable="false"
+                    android:textColor="@color/black"
+                    app:cornerRadius="0dp"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="1dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/minusCTNR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ct.Nr"
+                    app:cornerRadius="0dp"
+                    android:textColor="@color/black"
+                    android:backgroundTint="@color/grey"
+                    android:clickable="false"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="1dp"
+                    android:layout_marginStart="10dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/goodCTNR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ct.Nr"
+                    android:textColor="@color/black"
+                    app:cornerRadius="0dp"
+                    android:layout_marginStart="10dp"
+                    android:clickable="false"
+                    android:backgroundTint="@color/grey"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="1dp"
+                    android:layout_marginEnd="10dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:weightSum="3">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/cartonPartNR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/grey"
+                    android:text="Part.Nr"
+                    android:textColor="@color/black"
+                    android:clickable="false"
+                    app:cornerRadius="0dp"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="1dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/minusPartNR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Part.Nr"
+                    app:cornerRadius="0dp"
+                    android:textColor="@color/black"
+                    android:backgroundTint="@color/grey"
+                    android:clickable="false"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="1dp"
+                    android:layout_marginStart="10dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/goodPartNR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Part.Nr"
+                    android:textColor="@color/black"
+                    app:cornerRadius="0dp"
+                    android:layout_marginStart="10dp"
+                    android:backgroundTint="@color/grey"
+                    android:clickable="false"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="1dp"
+                    android:layout_marginEnd="10dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:weightSum="3">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/cartonDNR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/grey"
+                    android:text="D-Nr"
+                    android:textColor="@color/black"
+                    android:clickable="false"
+                    app:cornerRadius="0dp"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="1dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/minusDNR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="D-Nr"
+                    app:cornerRadius="0dp"
+                    android:textColor="@color/black"
+                    android:backgroundTint="@color/grey"
+                    android:clickable="false"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="1dp"
+                    android:layout_marginStart="10dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/goodDNR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="D-Nr"
+                    android:textColor="@color/black"
+                    app:cornerRadius="0dp"
+                    android:layout_marginStart="10dp"
+                    android:backgroundTint="@color/grey"
+                    android:clickable="false"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="1dp"
+                    android:layout_marginEnd="10dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:weightSum="3">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/cartonQTY"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/grey"
+                    android:text="Qtty"
+                    android:textColor="@color/black"
+                    android:clickable="false"
+                    app:cornerRadius="0dp"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="1dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/minusQTY"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="M-Qtty"
+                    app:cornerRadius="0dp"
+                    android:textColor="@color/black"
+                    android:backgroundTint="@color/grey"
+                    android:clickable="false"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="1dp"
+                    android:layout_marginStart="10dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/goodQTY"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Qtty"
+                    android:textColor="@color/black"
+                    app:cornerRadius="0dp"
+                    android:layout_marginStart="10dp"
+                    android:backgroundTint="@color/grey"
+                    android:clickable="false"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="1dp"
+                    android:layout_marginEnd="10dp"/>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <RelativeLayout
+                    android:id="@+id/photoLayout"
+                    android:layout_width="100dp"
+                    android:layout_height="150dp"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/bg_layer"
+                    >
+
+                    <ImageView
+                        android:id="@+id/photoId"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:backgroundTint="@color/grey"
+                        android:layout_alignParentStart="true"
+                        android:textColor="@color/black"
+                        android:clickable="false"
+                        app:cornerRadius="0dp"
+                        app:strokeColor="@color/black"
+                        app:strokeWidth="1dp" />
+
+                    <TextView
+                        android:id="@+id/photoTxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Photo"
+                        android:textSize="16sp"
+                        android:textColor="@color/black"
+                        android:layout_centerInParent="true"/>
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/photoLayout"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/addMinusBT"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Add"
+                            android:clickable="false"
+                            android:enabled="false"
+                            app:cornerRadius="10dp"
+                            android:textColor="@color/white"
+                            android:backgroundTint="@color/dark_grey"
+                            android:layout_toStartOf="@id/addGoodBT"
+                            android:layout_marginStart="10dp"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/addGoodBT"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Add"
+                            android:textColor="@color/white"
+                            app:cornerRadius="10dp"
+                            android:clickable="false"
+                            android:enabled="false"
+                            android:layout_marginStart="10dp"
+                            android:backgroundTint="@color/dark_grey"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginEnd="10dp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="2"
+                        android:layout_marginEnd="10dp">
+
+                        <RelativeLayout
+                            android:id="@+id/emptyContainer1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="100dp"
+                            android:layout_marginStart="10dp"
+                            android:background="@drawable/bg_layer"
+                            android:layout_weight="1"
+                            android:layout_toEndOf="@id/photoLayout"
+                            android:layout_below="@id/addMinusBT"
+                            >
+
+                            <ScrollView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <LinearLayout
+                                    android:id="@+id/addMinusLayout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="invisible"
+                                    >
+
+                                    <TextView
+                                        android:id="@+id/addMinusCtNr"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="CTNr"
+                                        android:layout_margin="5dp"/>
+
+                                    <TextView
+                                        android:id="@+id/addminusPartNr"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="PartNr"
+                                        android:layout_margin="5dp"/>
+
+                                    <TextView
+                                        android:id="@+id/addMinusDnr"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Dnr"
+                                        android:layout_margin="5dp"/>
+
+                                    <TextView
+                                        android:id="@+id/addMinusQty"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="M-Qty"
+                                        android:layout_margin="5dp"/>
+
+                                </LinearLayout>
+
+                            </ScrollView>
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/emptyContainer2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="100dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_layer"
+                            >
+
+                            <ScrollView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <LinearLayout
+                                    android:id="@+id/addGoodLayout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="invisible">
+
+                                    <TextView
+                                        android:id="@+id/addGoodCtNr"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="CTNr"
+                                        android:layout_margin="5dp"/>
+
+                                    <TextView
+                                        android:id="@+id/addGoodPartNr"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="PartNr"
+                                        android:layout_margin="5dp"/>
+
+                                    <TextView
+                                        android:id="@+id/addGoodDnr"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Dnr"
+                                        android:layout_margin="5dp"/>
+
+                                    <TextView
+                                        android:id="@+id/addGoodQty"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Qty"
+                                        android:layout_margin="5dp"/>
+
+                                </LinearLayout>
+
+                            </ScrollView>
+
+                        </RelativeLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="40dp"
+                android:weightSum="4">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/logoutBT"
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/red"
+                    android:text="Logout"
+                    android:textSize="10sp"
+                    android:textColor="@color/white"
+                    app:cornerRadius="0dp"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="1dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/clearBT"
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:textSize="10sp"
+                    android:backgroundTint="@color/dark_grey"
+                    android:text="Clear"
+                    android:textColor="@color/white"
+                    app:cornerRadius="0dp"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="1dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/viewBT"
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:layout_weight="1"
+                    android:text="View"
+                    android:textSize="10sp"
+                    app:cornerRadius="0dp"
+                    android:textColor="@color/white"
+                    android:backgroundTint="@color/dark_grey"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="1dp"
+                    android:layout_marginStart="5dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/saveBT"
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:layout_weight="1"
+                    android:text="Next"
+                    android:textColor="@color/white"
+                    app:cornerRadius="0dp"
+                    android:textSize="10sp"
+                    android:clickable="false"
+                    android:enabled="false"
+                    android:layout_marginStart="5dp"
+                    android:backgroundTint="@color/colorPrimary"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="1dp"
+                    android:layout_marginEnd="5dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
