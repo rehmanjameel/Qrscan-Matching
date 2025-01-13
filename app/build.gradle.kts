@@ -46,8 +46,8 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     implementation(libs.zxing.android.embedded)
-    implementation("com.github.yuriy-budiyev:code-scanner:2.3.0")
+    implementation(libs.code.scanner)
 
-    implementation ("org.apache.poi:poi:5.2.3")
-    implementation ("org.apache.poi:poi-ooxml:5.2.3")
+    implementation (libs.poi)
+    implementation (libs.poi.ooxml)
 }
