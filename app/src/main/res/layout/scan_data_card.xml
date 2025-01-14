@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:elevation="5dp"
+    android:padding="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/timestampTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="Timestamp" />
+
+        <TextView
+            android:id="@+id/tagTypeTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tag Type" />
+
+        <TextView
+            android:id="@+id/ctnrTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CTNR" />
+
+        <TextView
+            android:id="@+id/partNrTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PartNR" />
+
+        <TextView
+            android:id="@+id/dnrTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="DNR" />
+
+        <TextView
+            android:id="@+id/qtyTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="QTY" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

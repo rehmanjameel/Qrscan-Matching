@@ -8,11 +8,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.inputmethodservice.Keyboard;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -20,7 +23,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -30,6 +35,9 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.journeyapps.barcodescanner.CaptureActivity;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -37,8 +45,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.base.qrcodescanandmatch.databinding.ActivityDisplayScannedDataBinding;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class DisplayScannedDataActivity extends AppCompatActivity {
 
@@ -124,6 +135,11 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
             clearAllScreen();
         });
 
+        binding.viewBT.setOnClickListener(view -> {
+            Intent intent = new Intent(this, ReadScannedDataActivity.class);
+            startActivity(intent);
+//            openExcelFileWithIntent();
+        });
     }
 
     private void openScanner() {
@@ -373,45 +389,100 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
     private void saveToExcel(String goodCTNR, String goodPartNR, String goodDNR, String goodQTY,
                              String minusCTNR, String minusPartNR, String minusDNR, String minusQTY,
                              String cartonCTNR, String cartonPartNR, String cartonDNR, String cartonQTY) {
-        // Create a workbook and sheet
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Matched Data");
 
-        // Create a header row
-        Row headerRow = sheet.createRow(0);
-        headerRow.createCell(1).setCellValue("CTNR");
-        headerRow.createCell(2).setCellValue("PartNR");
-        headerRow.createCell(3).setCellValue("DNR");
-        headerRow.createCell(4).setCellValue("QTY");
+        String fileNameDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
-        // Add rows for each match
-        int rowIndex = 1;
+        // Define file location
+        File downloadsDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File file = new File(downloadsDirectory, fileNameDate + ".xlsx");
 
-        Row goodRow = sheet.createRow(rowIndex++);
-        goodRow.createCell(0).setCellValue("Good Tag");
-        goodRow.createCell(1).setCellValue(goodCTNR);
-        goodRow.createCell(2).setCellValue(goodPartNR);
-        goodRow.createCell(3).setCellValue(goodDNR);
-        goodRow.createCell(4).setCellValue(goodQTY);
+        Workbook workbook;
+        Sheet sheet;
 
-        Row minusRow = sheet.createRow(rowIndex++);
-        minusRow.createCell(0).setCellValue("Minus Tag");
-        minusRow.createCell(1).setCellValue(minusCTNR);
-        minusRow.createCell(2).setCellValue(minusPartNR);
-        minusRow.createCell(3).setCellValue(minusDNR);
-        minusRow.createCell(4).setCellValue(minusQTY);
+        // Create header row styles
+        CellStyle headerCellStyle;
+        Font headerFont;
+
+        // Check if file exists
+        if (file.exists()) {
+            try (FileInputStream fis = new FileInputStream(file)) {
+                workbook = new XSSFWorkbook(fis);
+                sheet = workbook.getSheet("Matched Data");
+                if (sheet == null) {
+                    sheet = workbook.createSheet("Matched Data");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Failed to load existing file: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                return;
+            }
+        } else {
+            workbook = new XSSFWorkbook();
+            sheet = workbook.createSheet("Matched Data");
+            headerCellStyle = workbook.createCellStyle();
+            headerFont = workbook.createFont();
+            headerFont.setBold(true); // Make the font bold
+            headerCellStyle.setFont(headerFont);
+
+            // Create header row
+            Row headerRow = sheet.createRow(0);
+            Cell timestampCell = headerRow.createCell(0);
+            timestampCell.setCellValue("Timestamp");
+            timestampCell.setCellStyle(headerCellStyle);
+
+            Cell tagTypeCell = headerRow.createCell(1);
+            tagTypeCell.setCellValue("Tag Type");
+            tagTypeCell.setCellStyle(headerCellStyle);
+
+            Cell ctnrCell = headerRow.createCell(2);
+            ctnrCell.setCellValue("CTNR");
+            ctnrCell.setCellStyle(headerCellStyle);
+
+            Cell partNrCell = headerRow.createCell(3);
+            partNrCell.setCellValue("PartNR");
+            partNrCell.setCellStyle(headerCellStyle);
+
+            Cell dnrCell = headerRow.createCell(4);
+            dnrCell.setCellValue("DNR");
+            dnrCell.setCellStyle(headerCellStyle);
+
+            Cell qtyCell = headerRow.createCell(5);
+            qtyCell.setCellValue("QTY");
+            qtyCell.setCellStyle(headerCellStyle);
+        }
+
+        // Find the next empty row
+        int rowIndex = sheet.getLastRowNum() + 1;
+
+        // Add current timestamp for each scan
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
         Row cartonRow = sheet.createRow(rowIndex++);
-        cartonRow.createCell(0).setCellValue("Carton Label");
-        cartonRow.createCell(1).setCellValue(cartonCTNR);
-        cartonRow.createCell(2).setCellValue(cartonPartNR);
-        cartonRow.createCell(3).setCellValue(cartonDNR);
-        cartonRow.createCell(4).setCellValue(cartonQTY);
+        cartonRow.createCell(0).setCellValue(timestamp);
+        cartonRow.createCell(1).setCellValue("Carton Label");
+        cartonRow.createCell(2).setCellValue(cartonCTNR);
+        cartonRow.createCell(3).setCellValue(cartonPartNR);
+        cartonRow.createCell(4).setCellValue(cartonDNR);
+        cartonRow.createCell(5).setCellValue(cartonQTY);
 
-        // Save the file to the Downloads directory
-        File downloadsDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        File file = new File(downloadsDirectory, "MatchedData.xlsx");
+        Row minusRow = sheet.createRow(rowIndex++);
+        minusRow.createCell(0).setCellValue(timestamp);
+        minusRow.createCell(1).setCellValue("Minus Tag");
+        minusRow.createCell(2).setCellValue(minusCTNR);
+        minusRow.createCell(3).setCellValue(minusPartNR);
+        minusRow.createCell(4).setCellValue(minusDNR);
+        minusRow.createCell(5).setCellValue(minusQTY);
 
+        // Add rows for each match
+        Row goodRow = sheet.createRow(rowIndex++);
+        goodRow.createCell(0).setCellValue(timestamp);
+        goodRow.createCell(1).setCellValue("Good Tag");
+        goodRow.createCell(2).setCellValue(goodCTNR);
+        goodRow.createCell(3).setCellValue(goodPartNR);
+        goodRow.createCell(4).setCellValue(goodDNR);
+        goodRow.createCell(5).setCellValue(goodQTY);
+
+        // Save the file back to the same location
         try (FileOutputStream fos = new FileOutputStream(file)) {
             workbook.write(fos);
             workbook.close();
@@ -425,20 +496,31 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
     private void checkAndRequestPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             // For Android 11+ (Scoped Storage) no permission is required
-            saveToExcel(goodCTNR, goodPartNR, goodDNR, goodQTY,
-                    minusCTNR, minusPartNR, minusDNR, minusQTY,
-                    cartonCTNR, cartonPartNR, cartonDNR, cartonQTY);
-            clearAllScreen();
+            // For Android 11+ (Scoped Storage)
+            if (!Environment.isExternalStorageManager()) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+            } else {
+                saveToExcel(goodCTNR, goodPartNR, goodDNR, goodQTY,
+                        minusCTNR, minusPartNR, minusDNR, minusQTY,
+                        cartonCTNR, cartonPartNR, cartonDNR, cartonQTY);
+                clearAllScreen();
+            }
         } else {
             // For below Android 11, request WRITE_EXTERNAL_STORAGE permission
-            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            // For Android 10 and below
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                    checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 saveToExcel(goodCTNR, goodPartNR, goodDNR, goodQTY,
                         minusCTNR, minusPartNR, minusDNR, minusQTY,
                         cartonCTNR, cartonPartNR, cartonDNR, cartonQTY);
                 clearAllScreen();
             } else {
-                permissionLauncher.launch(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
             }
+
         }
     }
 
@@ -532,5 +614,29 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
                 })
                 .show();
     }
+
+    private void openExcelFileWithIntent() {
+        File downloadsDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File file = new File(downloadsDirectory, "MatchedData.xlsx");
+
+        if (file.exists()) {
+            Uri fileUri = FileProvider.getUriForFile(this, "org.base.qrcodescanandmatch", file);
+
+            Intent intent=new Intent(Intent.ACTION_VIEW);
+            Uri apkURI = FileProvider.getUriForFile(getApplicationContext(),
+                    getApplicationContext()                             .getPackageName(),file);
+
+            MimeTypeMap myMime = MimeTypeMap.getSingleton();
+            String mimeType=myMime.getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(apkURI.toString()));//It will return the mimetype
+
+            intent.setDataAndType(apkURI, mimeType);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "File not found", Toast.LENGTH_LONG).show();
+        }
+    }
+
 
 }
