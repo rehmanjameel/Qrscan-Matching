@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -121,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         if (!appDirectory.exists()) {
             boolean isCreated = appDirectory.mkdirs(); // Create the folder if it doesn't exist
             if (!isCreated) {
+                binding.progressBar.setVisibility(View.GONE);
                 Toast.makeText(this, "Failed to create app folder", Toast.LENGTH_LONG).show();
                 return;
             }
@@ -142,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+                binding.progressBar.setVisibility(View.GONE);
                 Toast.makeText(this, "Error reading file: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 return;
             }
@@ -172,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, DisplayScannedDataActivity.class);
             intent.putExtra("user_name", username);
             startActivity(intent);
+            binding.progressBar.setVisibility(View.GONE);
             Toast.makeText(this, "Login Successful: User already exists", Toast.LENGTH_SHORT).show();
 
         } else {
@@ -185,9 +189,12 @@ public class MainActivity extends AppCompatActivity {
             try (FileOutputStream fos = new FileOutputStream(file)) {
                 workbook.write(fos);
                 workbook.close();
+                binding.progressBar.setVisibility(View.GONE);
+
                 Toast.makeText(this, "New user added. Login Successful!", Toast.LENGTH_SHORT).show();
             } catch (IOException e) {
                 e.printStackTrace();
+                binding.progressBar.setVisibility(View.GONE);
                 Toast.makeText(this, "Error saving file: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
@@ -202,6 +209,8 @@ public class MainActivity extends AppCompatActivity {
                 intent.setData(Uri.parse("package:" + getPackageName()));
                 startActivity(intent);
             } else {
+                binding.progressBar.setVisibility(View.VISIBLE);
+
                 handleLogin(userName);
             }
         } else {
@@ -209,6 +218,7 @@ public class MainActivity extends AppCompatActivity {
             // For Android 10 and below
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
                     checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                binding.progressBar.setVisibility(View.VISIBLE);
                 handleLogin(userName);
             } else {
                 ActivityCompat.requestPermissions(this,

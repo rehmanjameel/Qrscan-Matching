@@ -101,6 +101,7 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
             // Check and request permission
             checkAndRequestPermission();
 
+
         });
 
         binding.addMinusBT.setOnClickListener(v -> {
@@ -368,6 +369,9 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
             binding.saveBT.setEnabled(true);
             binding.matchOrNot.setVisibility(View.VISIBLE);
 
+            binding.saveBT.setBackgroundTintList(ColorStateList.
+                    valueOf(ContextCompat.getColor(this, R.color.colorPrimary)));
+
         } else {
             // Some values do not match
             String mismatchMessage = "";
@@ -522,9 +526,11 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
         try (FileOutputStream fos = new FileOutputStream(file)) {
             workbook.write(fos);
             workbook.close();
+            binding.progressBar.setVisibility(View.GONE);
             Toast.makeText(this, "Data saved to: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             e.printStackTrace();
+            binding.progressBar.setVisibility(View.GONE);
             Toast.makeText(this, "Failed to save Excel file: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
@@ -538,6 +544,7 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
                 intent.setData(Uri.parse("package:" + getPackageName()));
                 startActivity(intent);
             } else {
+                binding.progressBar.setVisibility(View.VISIBLE);
                 saveToExcel(goodCTNR, goodPartNR, goodDNR, goodQTY,
                         minusCTNR, minusPartNR, minusDNR, minusQTY,
                         cartonCTNR, cartonPartNR, cartonDNR, cartonQTY);
@@ -548,6 +555,7 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
             // For Android 10 and below
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
                     checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                binding.progressBar.setVisibility(View.VISIBLE);
                 saveToExcel(goodCTNR, goodPartNR, goodDNR, goodQTY,
                         minusCTNR, minusPartNR, minusDNR, minusQTY,
                         cartonCTNR, cartonPartNR, cartonDNR, cartonQTY);

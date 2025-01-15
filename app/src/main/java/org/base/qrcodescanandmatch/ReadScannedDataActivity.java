@@ -19,7 +19,9 @@ import org.base.qrcodescanandmatch.databinding.ActivityReadScannedDataBinding;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ReadScannedDataActivity extends AppCompatActivity {
@@ -38,17 +40,22 @@ public class ReadScannedDataActivity extends AppCompatActivity {
         ScanDataAdapter adapter = new ScanDataAdapter(scanDataList);
         binding.recyclerView.setAdapter(adapter);
 
+        binding.backButton.setOnClickListener(v -> onBackPressed());
+
     }
 
     private List<ScanData> readExcelFile() {
         List<ScanData> scanDataList = new ArrayList<>();
-        File downloadsDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        File file = new File(downloadsDirectory, "MatchedData.xlsx");
+        String fileNameDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
+        // Define file location
+        File downloadsDirectory = new File(Environment.getExternalStorageDirectory(), "QRCodeMatch");
+        File file = new File(downloadsDirectory, fileNameDate + ".xlsx");
 
         if (file.exists()) {
             try (FileInputStream fis = new FileInputStream(file)) {
                 Workbook workbook = new XSSFWorkbook(fis);
-                Sheet sheet = workbook.getSheet("Matched Data");
+                Sheet sheet = workbook.getSheet(fileNameDate);
 
                 for (int i = 1; i <= sheet.getLastRowNum(); i++) { // Skip header row
                     Row row = sheet.getRow(i);
