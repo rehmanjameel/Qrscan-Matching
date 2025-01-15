@@ -210,6 +210,17 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
 
                         extractCartonMinusGoodTextValues();
                         int addMinusVals = Integer.parseInt(minusQTY) + Integer.parseInt(addMinusQTY);
+                        binding.minusQTY.setText(String.valueOf(addMinusVals));
+                        if (binding.goodQTY.getText().toString().equals(binding.minusQTY.getText().toString())){
+                            binding.minusQTY.setBackgroundTintList(ColorStateList.
+                                    valueOf(ContextCompat.getColor(this, R.color.grey)));
+                            extractCartonMinusGoodTextValues();
+
+                            binding.saveBT.setEnabled(true);
+                            binding.saveBT.setClickable(true);
+                            binding.saveBT.setBackgroundTintList(ColorStateList.
+                                    valueOf(ContextCompat.getColor(this, R.color.colorPrimary)));
+                        }
                         Toast.makeText(this, "values added: " + addMinusVals, Toast.LENGTH_SHORT).show();
 
                     } else if (isAddGoodTag) {
@@ -220,8 +231,19 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
                         binding.addGoodQty.setText(parts[3]);
 
                         extractCartonMinusGoodTextValues();
-                        int addMinusVals = Integer.parseInt(goodQTY) + Integer.parseInt(addGoodTQTY);
-                        Toast.makeText(this, "values added: " + addMinusVals, Toast.LENGTH_SHORT).show();
+                        int addGoodVals = Integer.parseInt(goodQTY) + Integer.parseInt(addGoodTQTY);
+                        binding.goodQTY.setText(String.valueOf(addGoodVals));
+                        if (binding.goodQTY.getText().toString().equals(binding.minusQTY.getText().toString())){
+                            binding.goodQTY.setBackgroundTintList(ColorStateList.
+                                    valueOf(ContextCompat.getColor(this, R.color.grey)));
+                            extractCartonMinusGoodTextValues();
+
+                            binding.saveBT.setEnabled(true);
+                            binding.saveBT.setClickable(true);
+                            binding.saveBT.setBackgroundTintList(ColorStateList.
+                                    valueOf(ContextCompat.getColor(this, R.color.colorPrimary)));
+                        }
+                        Toast.makeText(this, "values added: " + addGoodVals, Toast.LENGTH_SHORT).show();
 
                     }
                 }
@@ -271,7 +293,9 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
         boolean dnrMatch = cartonDNR.equals(minusDNR);
         boolean qtyMatch = cartonQTY.equals(minusQTY);
 
-        if (ctnrMatch && partNRMatch && dnrMatch && qtyMatch) {
+        if (ctnrMatch && partNRMatch && dnrMatch
+//                && qtyMatch
+        ) {
             binding.matchOrNot.setText("All values match!");
             binding.matchOrNot.setVisibility(View.VISIBLE);
 
@@ -302,13 +326,13 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
                         valueOf(ContextCompat.getColor(this, R.color.red)));
             }
             if (!qtyMatch) {
-                binding.goodTagBT.setClickable(true);
 
                 binding.cartonLabelBT.setClickable(true);
                 binding.minusTagBT.setClickable(false);
-                binding.addMinusBT.setClickable(true);
                 binding.goodTagBT.setClickable(true);
                 binding.goodTagBT.setEnabled(true);
+                binding.addMinusBT.setClickable(true);
+                binding.addMinusBT.setEnabled(true);
                 binding.addMinusBT.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.
                         getColor(this, R.color.colorAccent)));
 
@@ -333,7 +357,7 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
         boolean ctnrMatch = goodCTNR.equals(minusCTNR) && goodCTNR.equals(cartonCTNR);
         boolean partNRMatch = goodPartNR.equals(minusPartNR) && goodPartNR.equals(cartonPartNR);
         boolean dnrMatch = goodDNR.equals(minusDNR) && goodDNR.equals(cartonDNR);
-        boolean qtyMatch = goodQTY.equals(minusQTY) && goodQTY.equals(cartonQTY);
+        boolean qtyMatch = goodQTY.equals(minusQTY);
 
         // Determine the status and display it
         if (ctnrMatch && partNRMatch && dnrMatch && qtyMatch) {
@@ -365,18 +389,20 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
                 mismatchMessage += "DNR values do not match.\n";
             }
             if (!qtyMatch) {
-                binding.saveBT.setEnabled(true);
-                binding.saveBT.setClickable(true);
+
                 mismatchMessage += "Qty values do not match.\n";
                 binding.goodQTY.setBackgroundTintList(ColorStateList.
                         valueOf(ContextCompat.getColor(this, R.color.red)));
+
+                binding.addGoodBT.setClickable(true);
+                binding.addGoodBT.setEnabled(true);
+                binding.addGoodBT.setBackgroundTintList(ColorStateList.valueOf(
+                        ContextCompat.getColor(this, R.color.colorAccent)));
             }
 
             binding.matchOrNot.setVisibility(View.VISIBLE);
             binding.matchOrNot.setText(mismatchMessage.trim());
-            binding.addGoodBT.setClickable(true);
-            binding.addGoodBT.setBackgroundTintList(ColorStateList.valueOf(
-                    ContextCompat.getColor(this, R.color.colorAccent)));
+
             binding.addMinusBT.setClickable(false);
             binding.matchOrNot.setTextColor(ColorStateList.valueOf(
                     ContextCompat.getColor(this, R.color.red)));
@@ -393,7 +419,7 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
         String fileNameDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
         // Define file location
-        File downloadsDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File downloadsDirectory = new File(Environment.getExternalStorageDirectory(), "QRCodeMatch");
         File file = new File(downloadsDirectory, fileNameDate + ".xlsx");
 
         Workbook workbook;
@@ -407,9 +433,9 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
         if (file.exists()) {
             try (FileInputStream fis = new FileInputStream(file)) {
                 workbook = new XSSFWorkbook(fis);
-                sheet = workbook.getSheet("Matched Data");
+                sheet = workbook.getSheet(fileNameDate);
                 if (sheet == null) {
-                    sheet = workbook.createSheet("Matched Data");
+                    sheet = workbook.createSheet(fileNameDate);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -418,14 +444,24 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
             }
         } else {
             workbook = new XSSFWorkbook();
-            sheet = workbook.createSheet("Matched Data");
+            sheet = workbook.createSheet(fileNameDate);
             headerCellStyle = workbook.createCellStyle();
             headerFont = workbook.createFont();
             headerFont.setBold(true); // Make the font bold
             headerCellStyle.setFont(headerFont);
 
+            Row userNameRow = sheet.createRow(0);
+            Cell nameTitleCell = userNameRow.createCell(0);
+            nameTitleCell.setCellValue("User Name");
+            nameTitleCell.setCellStyle(headerCellStyle);
+
+            Cell nameCell = userNameRow.createCell(1);
+            nameCell.setCellValue(getIntent().getStringExtra("user_name"));
+            nameCell.setCellStyle(headerCellStyle);
+
+
             // Create header row
-            Row headerRow = sheet.createRow(0);
+            Row headerRow = sheet.createRow(1);
             Cell timestampCell = headerRow.createCell(0);
             timestampCell.setCellValue("Timestamp");
             timestampCell.setCellStyle(headerCellStyle);
@@ -561,6 +597,7 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
         binding.addGoodBT.setClickable(false);
         binding.addMinusBT.setClickable(false);
         binding.saveBT.setClickable(false);
+        binding.saveBT.setEnabled(false);
 
 
         resetFieldsColor();
@@ -590,6 +627,9 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
         binding.goodDNR.setBackgroundTintList(ColorStateList.
                 valueOf(ContextCompat.getColor(this, R.color.grey)));
         binding.goodQTY.setBackgroundTintList(ColorStateList.
+                valueOf(ContextCompat.getColor(this, R.color.grey)));
+
+        binding.saveBT.setBackgroundTintList(ColorStateList.
                 valueOf(ContextCompat.getColor(this, R.color.grey)));
 
         binding.addMinusBT.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.

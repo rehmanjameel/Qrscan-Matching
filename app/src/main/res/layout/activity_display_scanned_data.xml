@@ -583,15 +583,17 @@
                     android:layout_weight="1"
                     android:text="Next"
                     android:textColor="@color/white"
-                    app:cornerRadius="0dp"
                     android:textSize="10sp"
                     android:clickable="false"
                     android:enabled="false"
                     android:layout_marginStart="5dp"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:backgroundTint="@color/grey"
+                    android:layout_marginEnd="5dp"
+                    app:cornerRadius="10dp"
                     app:strokeColor="@color/black"
                     app:strokeWidth="1dp"
-                    android:layout_marginEnd="5dp"/>
+                    android:elevation="10dp"
+                    />
 
             </LinearLayout>
 
