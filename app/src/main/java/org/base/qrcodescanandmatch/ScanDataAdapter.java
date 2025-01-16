@@ -28,6 +28,7 @@ public class ScanDataAdapter extends RecyclerView.Adapter<ScanDataAdapter.ScanVi
     @Override
     public void onBindViewHolder(@NonNull ScanViewHolder holder, int position) {
         ScanData data = scanDataList.get(position);
+        holder.userNameTV.setText(data.getUserName());
         holder.timestampTextView.setText(data.getTimestamp());
         holder.tagTypeTextView.setText(data.getTagType());
         holder.ctnrTextView.setText(data.getCtnr());
@@ -42,10 +43,12 @@ public class ScanDataAdapter extends RecyclerView.Adapter<ScanDataAdapter.ScanVi
     }
 
     public static class ScanViewHolder extends RecyclerView.ViewHolder {
-        TextView timestampTextView, tagTypeTextView, ctnrTextView, partNrTextView, dnrTextView, qtyTextView;
+        TextView timestampTextView, tagTypeTextView, ctnrTextView, partNrTextView, dnrTextView, qtyTextView,
+        userNameTV;
 
         public ScanViewHolder(@NonNull View itemView) {
             super(itemView);
+            userNameTV = itemView.findViewById(R.id.userNameTextView);
             timestampTextView = itemView.findViewById(R.id.timestampTextView);
             tagTypeTextView = itemView.findViewById(R.id.tagTypeTextView);
             ctnrTextView = itemView.findViewById(R.id.ctnrTextView);

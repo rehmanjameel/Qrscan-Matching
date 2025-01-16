@@ -455,38 +455,36 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
             headerCellStyle.setFont(headerFont);
 
             Row userNameRow = sheet.createRow(0);
-            Cell nameTitleCell = userNameRow.createCell(0);
-            nameTitleCell.setCellValue("User Name");
-            nameTitleCell.setCellStyle(headerCellStyle);
 
-            Cell nameCell = userNameRow.createCell(1);
-            nameCell.setCellValue(getIntent().getStringExtra("user_name"));
-            nameCell.setCellStyle(headerCellStyle);
 
 
             // Create header row
-            Row headerRow = sheet.createRow(1);
-            Cell timestampCell = headerRow.createCell(0);
+            Row headerRow = sheet.createRow(0);
+            Cell nameTitleCell = headerRow.createCell(0);
+            nameTitleCell.setCellValue("User Name");
+            nameTitleCell.setCellStyle(headerCellStyle);
+
+            Cell timestampCell = headerRow.createCell(1);
             timestampCell.setCellValue("Timestamp");
             timestampCell.setCellStyle(headerCellStyle);
 
-            Cell tagTypeCell = headerRow.createCell(1);
+            Cell tagTypeCell = headerRow.createCell(2);
             tagTypeCell.setCellValue("Tag Type");
             tagTypeCell.setCellStyle(headerCellStyle);
 
-            Cell ctnrCell = headerRow.createCell(2);
+            Cell ctnrCell = headerRow.createCell(3);
             ctnrCell.setCellValue("CTNR");
             ctnrCell.setCellStyle(headerCellStyle);
 
-            Cell partNrCell = headerRow.createCell(3);
+            Cell partNrCell = headerRow.createCell(4);
             partNrCell.setCellValue("PartNR");
             partNrCell.setCellStyle(headerCellStyle);
 
-            Cell dnrCell = headerRow.createCell(4);
+            Cell dnrCell = headerRow.createCell(5);
             dnrCell.setCellValue("DNR");
             dnrCell.setCellStyle(headerCellStyle);
 
-            Cell qtyCell = headerRow.createCell(5);
+            Cell qtyCell = headerRow.createCell(6);
             qtyCell.setCellValue("QTY");
             qtyCell.setCellStyle(headerCellStyle);
         }
@@ -498,29 +496,32 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
         String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
         Row cartonRow = sheet.createRow(rowIndex++);
-        cartonRow.createCell(0).setCellValue(timestamp);
-        cartonRow.createCell(1).setCellValue("Carton Label");
-        cartonRow.createCell(2).setCellValue(cartonCTNR);
-        cartonRow.createCell(3).setCellValue(cartonPartNR);
-        cartonRow.createCell(4).setCellValue(cartonDNR);
-        cartonRow.createCell(5).setCellValue(cartonQTY);
+        cartonRow.createCell(0).setCellValue(getIntent().getStringExtra("user_name"));
+        cartonRow.createCell(1).setCellValue(timestamp);
+        cartonRow.createCell(2).setCellValue("Carton Label");
+        cartonRow.createCell(3).setCellValue(cartonCTNR);
+        cartonRow.createCell(4).setCellValue(cartonPartNR);
+        cartonRow.createCell(5).setCellValue(cartonDNR);
+        cartonRow.createCell(6).setCellValue(cartonQTY);
 
         Row minusRow = sheet.createRow(rowIndex++);
-        minusRow.createCell(0).setCellValue(timestamp);
-        minusRow.createCell(1).setCellValue("Minus Tag");
-        minusRow.createCell(2).setCellValue(minusCTNR);
-        minusRow.createCell(3).setCellValue(minusPartNR);
-        minusRow.createCell(4).setCellValue(minusDNR);
-        minusRow.createCell(5).setCellValue(minusQTY);
+        minusRow.createCell(0).setCellValue(getIntent().getStringExtra("user_name"));
+        minusRow.createCell(1).setCellValue(timestamp);
+        minusRow.createCell(2).setCellValue("Minus Tag");
+        minusRow.createCell(3).setCellValue(minusCTNR);
+        minusRow.createCell(4).setCellValue(minusPartNR);
+        minusRow.createCell(5).setCellValue(minusDNR);
+        minusRow.createCell(6).setCellValue(minusQTY);
 
         // Add rows for each match
         Row goodRow = sheet.createRow(rowIndex++);
-        goodRow.createCell(0).setCellValue(timestamp);
-        goodRow.createCell(1).setCellValue("Good Tag");
-        goodRow.createCell(2).setCellValue(goodCTNR);
-        goodRow.createCell(3).setCellValue(goodPartNR);
-        goodRow.createCell(4).setCellValue(goodDNR);
-        goodRow.createCell(5).setCellValue(goodQTY);
+        goodRow.createCell(0).setCellValue(getIntent().getStringExtra("user_name"));
+        goodRow.createCell(1).setCellValue(timestamp);
+        goodRow.createCell(2).setCellValue("Good Tag");
+        goodRow.createCell(3).setCellValue(goodCTNR);
+        goodRow.createCell(4).setCellValue(goodPartNR);
+        goodRow.createCell(5).setCellValue(goodDNR);
+        goodRow.createCell(6).setCellValue(goodQTY);
 
         // Save the file back to the same location
         try (FileOutputStream fos = new FileOutputStream(file)) {

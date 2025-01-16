@@ -1,6 +1,7 @@
 package org.base.qrcodescanandmatch;
 
 public class ScanData {
+    private String userName;
     private String timestamp;
     private String tagType;
     private String ctnr;
@@ -8,7 +9,8 @@ public class ScanData {
     private String dnr;
     private String qty;
 
-    public ScanData(String timestamp, String tagType, String ctnr, String partNr, String dnr, String qty) {
+    public ScanData(String userName, String timestamp, String tagType, String ctnr, String partNr, String dnr, String qty) {
+        this.userName = userName;
         this.timestamp = timestamp;
         this.tagType = tagType;
         this.ctnr = ctnr;
@@ -18,6 +20,7 @@ public class ScanData {
     }
 
     // Getters
+    public String getUserName() { return userName; }
     public String getTimestamp() { return timestamp; }
     public String getTagType() { return tagType; }
     public String getCtnr() { return ctnr; }

@@ -60,14 +60,15 @@ public class ReadScannedDataActivity extends AppCompatActivity {
                 for (int i = 1; i <= sheet.getLastRowNum(); i++) { // Skip header row
                     Row row = sheet.getRow(i);
                     if (row != null) {
-                        String timestamp = row.getCell(0).getStringCellValue();
-                        String tagType = row.getCell(1).getStringCellValue();
-                        String ctnr = row.getCell(2).getStringCellValue();
-                        String partNr = row.getCell(3).getStringCellValue();
-                        String dnr = row.getCell(4).getStringCellValue();
-                        String qty = row.getCell(5).getStringCellValue();
+                        String userName = row.getCell(0).getStringCellValue();
+                        String timestamp = row.getCell(1).getStringCellValue();
+                        String tagType = row.getCell(2).getStringCellValue();
+                        String ctnr = row.getCell(3).getStringCellValue();
+                        String partNr = row.getCell(4).getStringCellValue();
+                        String dnr = row.getCell(5).getStringCellValue();
+                        String qty = row.getCell(6).getStringCellValue();
 
-                        ScanData data = new ScanData(timestamp, tagType, ctnr, partNr, dnr, qty);
+                        ScanData data = new ScanData(userName, timestamp, tagType, ctnr, partNr, dnr, qty);
                         scanDataList.add(data);
                     }
                 }

@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -94,9 +95,15 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getBaseContext(), "Cancelled", Toast.LENGTH_SHORT).show();
             } else {
                 // Split the text using the delimiter
-                String name = intentResult.getContents();
-                Toast.makeText(this, "user name: " + name, Toast.LENGTH_SHORT).show();
-                binding.userNameET.setText(name);
+                String[] parts = intentResult.getContents().split(";");
+
+                if (parts.length == 2) {
+
+                    String name = intentResult.getContents();
+                    Toast.makeText(this, "user name: " + name, Toast.LENGTH_SHORT).show();
+                    binding.userNameET.setText(parts[0]);
+                    binding.passwordET.setText(parts[1]);
+                }
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -116,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void handleLogin(String username) {
+    private void handleLogin(String username, String password) {
         // Define app-specific folder
         File appDirectory = new File(Environment.getExternalStorageDirectory(), "QRCodeMatch");
         if (!appDirectory.exists()) {
@@ -129,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Define file location in the app folder
-        File file = new File(appDirectory, "Users.xlsx");
+        File file = new File(appDirectory, "Login.xlsx");
 
         Workbook workbook;
         Sheet sheet;
@@ -138,9 +145,9 @@ public class MainActivity extends AppCompatActivity {
         if (file.exists()) {
             try (FileInputStream fis = new FileInputStream(file)) {
                 workbook = new XSSFWorkbook(fis);
-                sheet = workbook.getSheet("Users");
+                sheet = workbook.getSheet("Login");
                 if (sheet == null) {
-                    sheet = workbook.createSheet("Users");
+                    sheet = workbook.createSheet("Login");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -150,11 +157,14 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             workbook = new XSSFWorkbook();
-            sheet = workbook.createSheet("Users");
+            sheet = workbook.createSheet("Login");
             // Create header row
             Row headerRow = sheet.createRow(0);
             Cell headerCell = headerRow.createCell(0);
             headerCell.setCellValue("Username");
+            Cell passwordCell = headerRow.createCell(1);
+            passwordCell.setCellValue("Password");
+
         }
 
         boolean userExists = false;
@@ -164,6 +174,9 @@ public class MainActivity extends AppCompatActivity {
             Row row = sheet.getRow(i);
             if (row != null) {
                 Cell cell = row.getCell(0);
+                Cell passCell = row.getCell(1);
+                Log.e("cell", cell.getStringCellValue());
+                Log.e("passcell", passCell.getStringCellValue());
                 if (cell != null && username.equals(cell.getStringCellValue())) {
                     userExists = true;
                     break;
@@ -184,13 +197,17 @@ public class MainActivity extends AppCompatActivity {
             Row newRow = sheet.createRow(newRowIdx);
             Cell newCell = newRow.createCell(0);
             newCell.setCellValue(username);
+            Cell passCell = newRow.createCell(1);
+            passCell.setCellValue(password);
 
             // Save the file
             try (FileOutputStream fos = new FileOutputStream(file)) {
                 workbook.write(fos);
                 workbook.close();
                 binding.progressBar.setVisibility(View.GONE);
-
+                Intent intent = new Intent(this, DisplayScannedDataActivity.class);
+                intent.putExtra("user_name", username);
+                startActivity(intent);
                 Toast.makeText(this, "New user added. Login Successful!", Toast.LENGTH_SHORT).show();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -211,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 binding.progressBar.setVisibility(View.VISIBLE);
 
-                handleLogin(userName);
+                handleLogin(userName, password);
             }
         } else {
             // For below Android 11, request WRITE_EXTERNAL_STORAGE permission
@@ -219,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
                     checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 binding.progressBar.setVisibility(View.VISIBLE);
-                handleLogin(userName);
+                handleLogin(userName, password);
             } else {
                 ActivityCompat.requestPermissions(this,
                         new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
