@@ -49,7 +49,7 @@ public class ReadScannedDataActivity extends AppCompatActivity {
         String fileNameDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
         // Define file location
-        File downloadsDirectory = new File(Environment.getExternalStorageDirectory(), "QRCodeMatch");
+        File downloadsDirectory = new File(Environment.getExternalStorageDirectory(), "RefillingScan");
         File file = new File(downloadsDirectory, fileNameDate + ".xlsx");
 
         if (file.exists()) {

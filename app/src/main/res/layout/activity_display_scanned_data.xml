@@ -438,28 +438,28 @@
                                         android:id="@+id/addMinusCtNr"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="CTNr"
+                                        android:text=""
                                         android:layout_margin="5dp"/>
 
                                     <TextView
                                         android:id="@+id/addminusPartNr"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="PartNr"
+                                        android:text=""
                                         android:layout_margin="5dp"/>
 
                                     <TextView
                                         android:id="@+id/addMinusDnr"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Dnr"
+                                        android:text=""
                                         android:layout_margin="5dp"/>
 
                                     <TextView
                                         android:id="@+id/addMinusQty"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="M-Qty"
+                                        android:text=""
                                         android:layout_margin="5dp"/>
 
                                 </LinearLayout>
@@ -492,28 +492,28 @@
                                         android:id="@+id/addGoodCtNr"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="CTNr"
+                                        android:text=""
                                         android:layout_margin="5dp"/>
 
                                     <TextView
                                         android:id="@+id/addGoodPartNr"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="PartNr"
+                                        android:text=""
                                         android:layout_margin="5dp"/>
 
                                     <TextView
                                         android:id="@+id/addGoodDnr"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Dnr"
+                                        android:text=""
                                         android:layout_margin="5dp"/>
 
                                     <TextView
                                         android:id="@+id/addGoodQty"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Qty"
+                                        android:text=""
                                         android:layout_margin="5dp"/>
 
                                 </LinearLayout>

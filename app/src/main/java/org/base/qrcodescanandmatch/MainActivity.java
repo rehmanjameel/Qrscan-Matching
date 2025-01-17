@@ -26,6 +26,7 @@ import com.google.zxing.integration.android.IntentResult;
 import com.journeyapps.barcodescanner.CaptureActivity;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -42,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private ActivityResultLauncher<String> permissionLauncher;
     String userName, password;
+    File appDirectory, file;
+    Workbook workbook;
+    Sheet sheet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
 
         binding.loginButton.setOnClickListener(v -> {
             verifyFields();
@@ -68,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         permissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(),
                 isGranted -> {
                     if (isGranted) {
-
+                        createFolderAndFile();
                     } else {
                         Toast.makeText(this, "Permission denied. Cannot save file.", Toast.LENGTH_SHORT).show();
                     }
@@ -83,6 +88,56 @@ public class MainActivity extends AppCompatActivity {
         intentIntegrator.setCaptureActivity(CaptureActivity.class); // Use default capture activity
         intentIntegrator.initiateScan();
     }
+
+    private void createFolderAndFile() {
+        // Define the app directory
+        appDirectory = new File(Environment.getExternalStorageDirectory(), "RefillingScan");
+
+        // Check if the folder exists; if not, create it
+        if (!appDirectory.exists()) {
+            boolean isCreated = appDirectory.mkdirs(); // Create the folder if it doesn't exist
+            if (!isCreated) {
+                binding.progressBar.setVisibility(View.GONE);
+                Toast.makeText(this, "Failed to create app folder", Toast.LENGTH_LONG).show();
+                return;
+            } else {
+                Toast.makeText(this, "Created RefillingScan folder", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        // Define the file path
+        file = new File(appDirectory, "Login.xls");
+
+        // Check if the file exists; if not, create it
+        if (!file.exists()) {
+            try {
+                // Create a new workbook and sheet
+                workbook = new XSSFWorkbook();
+                sheet = workbook.createSheet("Login");
+
+                // Create the header row
+                Row headerRow = sheet.createRow(0);
+                Cell headerCell = headerRow.createCell(0);
+                headerCell.setCellValue("Username");
+                Cell passwordCell = headerRow.createCell(1);
+                passwordCell.setCellValue("Password");
+
+                // Write the workbook content to the file
+                try (FileOutputStream fos = new FileOutputStream(file)) {
+                    workbook.write(fos);
+                    workbook.close(); // Close the workbook
+                }
+
+                Toast.makeText(this, "Login file created within the RefillingScan folder", Toast.LENGTH_LONG).show();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Error creating Login file: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        } else {
+//            Toast.makeText(this, "Login file already exists", Toast.LENGTH_LONG).show();
+        }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -101,8 +156,9 @@ public class MainActivity extends AppCompatActivity {
 
                     String name = intentResult.getContents();
                     Toast.makeText(this, "user name: " + name, Toast.LENGTH_SHORT).show();
-                    binding.userNameET.setText(parts[0]);
-                    binding.passwordET.setText(parts[1]);
+//                    binding.userNameET.setText(parts[0]);
+//                    binding.passwordET.setText(parts[1]);
+                    handleLogin(parts[0], parts[1]);
                 }
             }
         } else {
@@ -117,7 +173,10 @@ public class MainActivity extends AppCompatActivity {
         if (!userName.isEmpty() && !password.isEmpty()) {
 //            Intent intent = new Intent(this, DisplayScannedDataActivity.class);
 //            startActivity(intent);
-            checkAndRequestPermission();
+
+            if (checkAndRequestPermission()) {
+                handleLogin(userName, password);
+            }
         } else {
             Toast.makeText(this, "Please enter the valid data!", Toast.LENGTH_SHORT).show();
         }
@@ -125,21 +184,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void handleLogin(String username, String password) {
         // Define app-specific folder
-        File appDirectory = new File(Environment.getExternalStorageDirectory(), "QRCodeMatch");
-        if (!appDirectory.exists()) {
-            boolean isCreated = appDirectory.mkdirs(); // Create the folder if it doesn't exist
-            if (!isCreated) {
-                binding.progressBar.setVisibility(View.GONE);
-                Toast.makeText(this, "Failed to create app folder", Toast.LENGTH_LONG).show();
-                return;
-            }
-        }
+//        File appDirectory = new File(Environment.getExternalStorageDirectory(), "RefillingScan");
+
 
         // Define file location in the app folder
-        File file = new File(appDirectory, "Login.xlsx");
-
-        Workbook workbook;
-        Sheet sheet;
 
         // Check if file exists
         if (file.exists()) {
@@ -176,9 +224,16 @@ public class MainActivity extends AppCompatActivity {
                 Cell cell = row.getCell(0);
                 Cell passCell = row.getCell(1);
                 Log.e("cell", cell.getStringCellValue());
-                Log.e("passcell", passCell.getStringCellValue());
-                if (cell != null && username.equals(cell.getStringCellValue())) {
-                    userExists = true;
+                DataFormatter formatter = new DataFormatter();
+                String pass = formatter.formatCellValue(passCell);
+                Log.e("passcell", pass);
+                if (username.equals(cell.getStringCellValue())) {
+                    if (password.equals(pass)) {
+                        userExists = true;
+                    } else {
+                        Toast.makeText(this, "Incorrect password", Toast.LENGTH_SHORT).show();
+
+                    }
                     break;
                 }
             }
@@ -192,32 +247,34 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Login Successful: User already exists", Toast.LENGTH_SHORT).show();
 
         } else {
-            // Add new user to the Excel file
-            int newRowIdx = sheet.getLastRowNum() + 1;
-            Row newRow = sheet.createRow(newRowIdx);
-            Cell newCell = newRow.createCell(0);
-            newCell.setCellValue(username);
-            Cell passCell = newRow.createCell(1);
-            passCell.setCellValue(password);
+            Toast.makeText(this, "User not exist!", Toast.LENGTH_SHORT).show();
 
-            // Save the file
-            try (FileOutputStream fos = new FileOutputStream(file)) {
-                workbook.write(fos);
-                workbook.close();
-                binding.progressBar.setVisibility(View.GONE);
-                Intent intent = new Intent(this, DisplayScannedDataActivity.class);
-                intent.putExtra("user_name", username);
-                startActivity(intent);
-                Toast.makeText(this, "New user added. Login Successful!", Toast.LENGTH_SHORT).show();
-            } catch (IOException e) {
-                e.printStackTrace();
-                binding.progressBar.setVisibility(View.GONE);
-                Toast.makeText(this, "Error saving file: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            }
+            // Add new user to the Excel file
+//            int newRowIdx = sheet.getLastRowNum() + 1;
+//            Row newRow = sheet.createRow(newRowIdx);
+//            Cell newCell = newRow.createCell(0);
+//            newCell.setCellValue(username);
+//            Cell passCell = newRow.createCell(1);
+//            passCell.setCellValue(password);
+//
+//            // Save the file
+//            try (FileOutputStream fos = new FileOutputStream(file)) {
+//                workbook.write(fos);
+//                workbook.close();
+//                binding.progressBar.setVisibility(View.GONE);
+//                Intent intent = new Intent(this, DisplayScannedDataActivity.class);
+//                intent.putExtra("user_name", username);
+//                startActivity(intent);
+//                Toast.makeText(this, "New user added. Login Successful!", Toast.LENGTH_SHORT).show();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                binding.progressBar.setVisibility(View.GONE);
+//                Toast.makeText(this, "Error saving file: " + e.getMessage(), Toast.LENGTH_LONG).show();
+//            }
         }
     }
 
-    private void checkAndRequestPermission() {
+    private void checkAndRequestPermission1() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             // For Android 11+ (Scoped Storage) no permission is required
             // For Android 11+ (Scoped Storage)
@@ -228,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 binding.progressBar.setVisibility(View.VISIBLE);
 
-                handleLogin(userName, password);
+                createFolderAndFile();
             }
         } else {
             // For below Android 11, request WRITE_EXTERNAL_STORAGE permission
@@ -236,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
                     checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 binding.progressBar.setVisibility(View.VISIBLE);
-                handleLogin(userName, password);
+                createFolderAndFile();
             } else {
                 ActivityCompat.requestPermissions(this,
                         new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
@@ -244,5 +301,39 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (checkAndRequestPermission()) {
+            createFolderAndFile();
+        }
+    }
+
+    private boolean checkAndRequestPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // For Android 11+ (Scoped Storage)
+            if (!Environment.isExternalStorageManager()) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+                return false; // Permission not granted
+            } else {
+                return true; // Permission granted
+            }
+        } else {
+            // For Android 10 and below
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                    checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                return true; // Permissions granted
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                return false; // Permissions not granted
+            }
+        }
+    }
+
 
 }

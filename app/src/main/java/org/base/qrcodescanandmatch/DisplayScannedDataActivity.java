@@ -121,7 +121,8 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
                     if (isGranted) {
                         saveToExcel(goodCTNR, goodPartNR, goodDNR, goodQTY,
                                 minusCTNR, minusPartNR, minusDNR, minusQTY,
-                                cartonCTNR, cartonPartNR, cartonDNR, cartonQTY);
+                                cartonCTNR, cartonPartNR, cartonDNR, cartonQTY, addGoodCTNR, addGoodPartNr, addGoodDNR, addGoodTQTY,
+                                addMinusCTNR, addMinusPartNR, addMinusDNR, addMinusQTY);
                         clearAllScreen();
                     } else {
                         Toast.makeText(this, "Permission denied. Cannot save file.", Toast.LENGTH_SHORT).show();
@@ -418,12 +419,14 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
 
     private void saveToExcel(String goodCTNR, String goodPartNR, String goodDNR, String goodQTY,
                              String minusCTNR, String minusPartNR, String minusDNR, String minusQTY,
-                             String cartonCTNR, String cartonPartNR, String cartonDNR, String cartonQTY) {
+                             String cartonCTNR, String cartonPartNR, String cartonDNR, String cartonQTY,
+                             String addGoodCTNR, String addGoodPartNr, String addGoodDnr, String addGoodQTY,
+                             String addMinusCTNR, String addMinusPartNR, String addMinusDNR, String addMinusQTY) {
 
         String fileNameDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
         // Define file location
-        File downloadsDirectory = new File(Environment.getExternalStorageDirectory(), "QRCodeMatch");
+        File downloadsDirectory = new File(Environment.getExternalStorageDirectory(), "RefillingScan");
         File file = new File(downloadsDirectory, fileNameDate + ".xlsx");
 
         Workbook workbook;
@@ -523,6 +526,29 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
         goodRow.createCell(5).setCellValue(goodDNR);
         goodRow.createCell(6).setCellValue(goodQTY);
 
+        if (!addGoodCTNR.isEmpty()) {
+            // Add rows for addgoods
+            Row addGoodRow = sheet.createRow(rowIndex++);
+            addGoodRow.createCell(0).setCellValue(getIntent().getStringExtra("user_name"));
+            addGoodRow.createCell(1).setCellValue(timestamp);
+            addGoodRow.createCell(2).setCellValue("Added Good Label");
+            addGoodRow.createCell(3).setCellValue(addGoodCTNR);
+            addGoodRow.createCell(4).setCellValue(addGoodPartNr);
+            addGoodRow.createCell(5).setCellValue(addGoodDnr);
+            addGoodRow.createCell(6).setCellValue(addGoodQTY);
+        }
+
+        if (!addMinusCTNR.isEmpty()) {
+            Row addMinusRow = sheet.createRow(rowIndex++);
+            addMinusRow.createCell(0).setCellValue(getIntent().getStringExtra("user_name"));
+            addMinusRow.createCell(1).setCellValue(timestamp);
+            addMinusRow.createCell(2).setCellValue("Added Minus Label");
+            addMinusRow.createCell(3).setCellValue(addMinusCTNR);
+            addMinusRow.createCell(4).setCellValue(addMinusPartNR);
+            addMinusRow.createCell(5).setCellValue(addMinusDNR);
+            addMinusRow.createCell(6).setCellValue(addMinusQTY);
+        }
+
         // Save the file back to the same location
         try (FileOutputStream fos = new FileOutputStream(file)) {
             workbook.write(fos);
@@ -548,7 +574,8 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
                 binding.progressBar.setVisibility(View.VISIBLE);
                 saveToExcel(goodCTNR, goodPartNR, goodDNR, goodQTY,
                         minusCTNR, minusPartNR, minusDNR, minusQTY,
-                        cartonCTNR, cartonPartNR, cartonDNR, cartonQTY);
+                        cartonCTNR, cartonPartNR, cartonDNR, cartonQTY, addGoodCTNR, addGoodPartNr, addGoodDNR, addGoodTQTY,
+                        addMinusCTNR, addMinusPartNR, addMinusDNR, addMinusQTY);
                 clearAllScreen();
             }
         } else {
@@ -559,7 +586,8 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
                 binding.progressBar.setVisibility(View.VISIBLE);
                 saveToExcel(goodCTNR, goodPartNR, goodDNR, goodQTY,
                         minusCTNR, minusPartNR, minusDNR, minusQTY,
-                        cartonCTNR, cartonPartNR, cartonDNR, cartonQTY);
+                        cartonCTNR, cartonPartNR, cartonDNR, cartonQTY, addGoodCTNR, addGoodPartNr, addGoodDNR, addGoodTQTY,
+                        addMinusCTNR, addMinusPartNR, addMinusDNR, addMinusQTY);
                 clearAllScreen();
             } else {
                 ActivityCompat.requestPermissions(this,
