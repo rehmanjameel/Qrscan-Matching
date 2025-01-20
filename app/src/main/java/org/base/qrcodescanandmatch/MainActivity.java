@@ -106,14 +106,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Define the file path
-        file = new File(appDirectory, "Login.xls");
+        file = new File(appDirectory, "login.xlsx");
 
         // Check if the file exists; if not, create it
         if (!file.exists()) {
             try {
                 // Create a new workbook and sheet
                 workbook = new XSSFWorkbook();
-                sheet = workbook.createSheet("Login");
+                sheet = workbook.createSheet("login");
 
                 // Create the header row
                 Row headerRow = sheet.createRow(0);
@@ -121,6 +121,11 @@ public class MainActivity extends AppCompatActivity {
                 headerCell.setCellValue("Username");
                 Cell passwordCell = headerRow.createCell(1);
                 passwordCell.setCellValue("Password");
+                Row testUserRow = sheet.createRow(1);
+                Cell userCell = testUserRow.createCell(0);
+                userCell.setCellValue("test");
+                Cell userPassword = testUserRow.createCell(1);
+                userPassword.setCellValue("1234");
 
                 // Write the workbook content to the file
                 try (FileOutputStream fos = new FileOutputStream(file)) {
@@ -193,9 +198,9 @@ public class MainActivity extends AppCompatActivity {
         if (file.exists()) {
             try (FileInputStream fis = new FileInputStream(file)) {
                 workbook = new XSSFWorkbook(fis);
-                sheet = workbook.getSheet("Login");
+                sheet = workbook.getSheet("login");
                 if (sheet == null) {
-                    sheet = workbook.createSheet("Login");
+                    sheet = workbook.createSheet("login");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -205,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             workbook = new XSSFWorkbook();
-            sheet = workbook.createSheet("Login");
+            sheet = workbook.createSheet("login");
             // Create header row
             Row headerRow = sheet.createRow(0);
             Cell headerCell = headerRow.createCell(0);
@@ -236,6 +241,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                 }
+            } else {
+                Toast.makeText(this, "No data found in file!", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -247,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Login Successful: User already exists", Toast.LENGTH_SHORT).show();
 
         } else {
-            Toast.makeText(this, "User not exist!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "User does not exist!", Toast.LENGTH_SHORT).show();
 
             // Add new user to the Excel file
 //            int newRowIdx = sheet.getLastRowNum() + 1;

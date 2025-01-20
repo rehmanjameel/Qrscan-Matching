@@ -105,8 +105,10 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
         });
 
         binding.addMinusBT.setOnClickListener(v -> {
+            Log.e("is here2", "in button");
             isAddMinusTag = true;
             isAddGoodTag = false;
+            Log.e("is here3", "in button");
             openScanner();
         });
 
@@ -217,7 +219,9 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
                             binding.minusQTY.setBackgroundTintList(ColorStateList.
                                     valueOf(ContextCompat.getColor(this, R.color.grey)));
                             extractCartonMinusGoodTextValues();
-
+                            binding.matchOrNot.setText("All values matched!");
+                            binding.matchOrNot.setTextColor(ColorStateList.
+                                    valueOf(ContextCompat.getColor(this, R.color.colorPrimary)));
                             binding.saveBT.setEnabled(true);
                             binding.saveBT.setClickable(true);
                             binding.saveBT.setBackgroundTintList(ColorStateList.
@@ -240,6 +244,9 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
                                     valueOf(ContextCompat.getColor(this, R.color.grey)));
                             extractCartonMinusGoodTextValues();
 
+                            binding.matchOrNot.setText("All values matched!");
+                            binding.matchOrNot.setTextColor(ColorStateList.
+                                    valueOf(ContextCompat.getColor(this, R.color.colorPrimary)));
                             binding.saveBT.setEnabled(true);
                             binding.saveBT.setClickable(true);
                             binding.saveBT.setBackgroundTintList(ColorStateList.
@@ -328,19 +335,19 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
                         valueOf(ContextCompat.getColor(this, R.color.red)));
             }
             if (!qtyMatch) {
-
-                binding.cartonLabelBT.setClickable(true);
-                binding.minusTagBT.setClickable(false);
-                binding.goodTagBT.setClickable(true);
-                binding.goodTagBT.setEnabled(true);
-                binding.addMinusBT.setClickable(true);
-                binding.addMinusBT.setEnabled(true);
                 binding.addMinusBT.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.
                         getColor(this, R.color.colorAccent)));
 
                 mismatchMessage += "M-Qty values do not match.\n";
                 binding.minusQTY.setBackgroundTintList(ColorStateList.
                         valueOf(ContextCompat.getColor(this, R.color.red)));
+                binding.cartonLabelBT.setClickable(true);
+                binding.minusTagBT.setClickable(false);
+                binding.goodTagBT.setClickable(true);
+                binding.goodTagBT.setEnabled(true);
+                binding.addMinusBT.setClickable(true);
+                binding.addMinusBT.setEnabled(true);
+
             }
 
             binding.matchOrNot.setVisibility(View.VISIBLE);
@@ -395,22 +402,32 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
             }
             if (!qtyMatch) {
 
-                mismatchMessage += "Qty values do not match.\n";
-                binding.goodQTY.setBackgroundTintList(ColorStateList.
-                        valueOf(ContextCompat.getColor(this, R.color.red)));
+                if (Integer.parseInt(goodQTY) < Integer.parseInt(minusQTY)) {
 
-                binding.addGoodBT.setClickable(true);
-                binding.addGoodBT.setEnabled(true);
-                binding.addGoodBT.setBackgroundTintList(ColorStateList.valueOf(
-                        ContextCompat.getColor(this, R.color.colorAccent)));
+                    binding.goodQTY.setBackgroundTintList(ColorStateList.
+                            valueOf(ContextCompat.getColor(this, R.color.red)));
+                    binding.addGoodBT.setBackgroundTintList(ColorStateList.valueOf(
+                            ContextCompat.getColor(this, R.color.colorAccent)));
+                    binding.addGoodBT.setClickable(true);
+                    binding.addGoodBT.setEnabled(true);
+                } else if (Integer.parseInt(goodQTY) > Integer.parseInt(minusQTY)) {
+                    binding.minusQTY.setBackgroundTintList(ColorStateList.
+                            valueOf(ContextCompat.getColor(this, R.color.red)));
+                    binding.addMinusBT.setBackgroundTintList(ColorStateList.valueOf(
+                            ContextCompat.getColor(this, R.color.colorAccent)));
+
+                    binding.addMinusBT.setEnabled(true);
+                    binding.addMinusBT.setClickable(true);
+
+                }
+                mismatchMessage += "Qty values do not match.\n";
+
+
             }
 
             binding.matchOrNot.setVisibility(View.VISIBLE);
             binding.matchOrNot.setText(mismatchMessage.trim());
 
-            binding.addMinusBT.setClickable(false);
-            binding.matchOrNot.setTextColor(ColorStateList.valueOf(
-                    ContextCompat.getColor(this, R.color.red)));
 
             Toast.makeText(this, mismatchMessage.trim(), Toast.LENGTH_SHORT).show();
         }
@@ -531,7 +548,7 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
             Row addGoodRow = sheet.createRow(rowIndex++);
             addGoodRow.createCell(0).setCellValue(getIntent().getStringExtra("user_name"));
             addGoodRow.createCell(1).setCellValue(timestamp);
-            addGoodRow.createCell(2).setCellValue("Added Good Label");
+            addGoodRow.createCell(2).setCellValue("Added Good Tag");
             addGoodRow.createCell(3).setCellValue(addGoodCTNR);
             addGoodRow.createCell(4).setCellValue(addGoodPartNr);
             addGoodRow.createCell(5).setCellValue(addGoodDnr);
@@ -542,7 +559,7 @@ public class DisplayScannedDataActivity extends AppCompatActivity {
             Row addMinusRow = sheet.createRow(rowIndex++);
             addMinusRow.createCell(0).setCellValue(getIntent().getStringExtra("user_name"));
             addMinusRow.createCell(1).setCellValue(timestamp);
-            addMinusRow.createCell(2).setCellValue("Added Minus Label");
+            addMinusRow.createCell(2).setCellValue("Added Minus Tag");
             addMinusRow.createCell(3).setCellValue(addMinusCTNR);
             addMinusRow.createCell(4).setCellValue(addMinusPartNR);
             addMinusRow.createCell(5).setCellValue(addMinusDNR);
